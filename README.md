@@ -104,18 +104,6 @@ A análise multivariada revela que:
 
 Recomenda-se uma abordagem integrada de controle, considerando fatores climáticos, socioeconômicos e de infraestrutura urbana.
 
-## 🔮 Próximos Passos
-
-- Incorporar dados oficiais de órgãos como INMET, IBGE e ministérios
-- Refinar a análise para o nível municipal
-- Desenvolver modelos preditivos para surtos de dengue
-- Incorporar dados sobre medidas de controle implementadas
-- Investigar em profundidade os estados outliers
-
 ## 📄 Licença
 
 Este projeto está sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 👤 Autor
-
-Desenvolvido como parte de um projeto de análise de dados para demonstração de habilidades em ciência de dados, visualização e análise multivariada.
