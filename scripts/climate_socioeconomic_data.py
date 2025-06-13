@@ -6,16 +6,14 @@ import requests
 from io import StringIO
 import os
 
-# Criar diretório para dados climáticos e socioeconômicos
 os.makedirs('/home/ubuntu/dados_complementares', exist_ok=True)
 
-# Função para simular dados climáticos por estado (já que não podemos baixar diretamente)
 def gerar_dados_climaticos():
     """
     Gera dados simulados de temperatura e precipitação por estado
     baseados em padrões climáticos conhecidos do Brasil.
     """
-    # Lista de estados brasileiros
+    
     estados = [
         'Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia', 'Ceará', 
         'Distrito Federal', 'Espírito Santo', 'Goiás', 'Maranhão', 
@@ -25,11 +23,8 @@ def gerar_dados_climaticos():
         'Santa Catarina', 'São Paulo', 'Sergipe', 'Tocantins'
     ]
     
-    # Meses do ano
     meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
     
-    # Dados de temperatura média (°C) - baseados em médias históricas aproximadas
-    # Regiões: Norte, Nordeste, Centro-Oeste, Sudeste, Sul
     temp_base_regiao = {
         'Norte': [27, 27, 27, 27, 26, 26, 26, 27, 28, 28, 28, 27],
         'Nordeste': [28, 28, 28, 27, 26, 25, 25, 26, 27, 28, 28, 28],
@@ -38,7 +33,6 @@ def gerar_dados_climaticos():
         'Sul': [24, 24, 23, 20, 17, 15, 15, 16, 18, 20, 22, 23]
     }
     
-    # Dados de precipitação média (mm) - baseados em médias históricas aproximadas
     precip_base_regiao = {
         'Norte': [300, 300, 300, 250, 200, 100, 80, 60, 80, 150, 200, 250],
         'Nordeste': [150, 180, 200, 180, 150, 100, 80, 30, 30, 50, 80, 100],
@@ -47,7 +41,6 @@ def gerar_dados_climaticos():
         'Sul': [150, 150, 150, 120, 100, 100, 100, 100, 150, 180, 150, 150]
     }
     
-    # Mapeamento de estados para regiões
     regiao_por_estado = {
         'Acre': 'Norte', 'Amapá': 'Norte', 'Amazonas': 'Norte', 'Pará': 'Norte', 
         'Rondônia': 'Norte', 'Roraima': 'Norte', 'Tocantins': 'Norte',
@@ -61,45 +54,36 @@ def gerar_dados_climaticos():
         'Paraná': 'Sul', 'Rio Grande do Sul': 'Sul', 'Santa Catarina': 'Sul'
     }
     
-    # Criar DataFrames vazios
     df_temp = pd.DataFrame(index=estados, columns=meses)
     df_precip = pd.DataFrame(index=estados, columns=meses)
     
-    # Preencher com dados simulados baseados nas médias regionais
     for estado in estados:
         regiao = regiao_por_estado[estado]
         
-        # Adicionar variação aleatória para cada estado dentro da mesma região
         temp_var = np.random.uniform(-1.5, 1.5)
         precip_var_factor = np.random.uniform(0.8, 1.2)
         
         for i, mes in enumerate(meses):
-            # Temperatura: média regional + variação específica do estado + pequena variação mensal
             temp_base = temp_base_regiao[regiao][i]
             df_temp.loc[estado, mes] = float(temp_base + temp_var + np.random.uniform(-0.5, 0.5))
             
-            # Precipitação: média regional * fator de variação do estado * pequena variação mensal
             precip_base = precip_base_regiao[regiao][i]
             df_precip.loc[estado, mes] = float(precip_base * precip_var_factor * np.random.uniform(0.9, 1.1))
     
-    # Converter para float e arredondar
     for col in meses:
         df_temp[col] = df_temp[col].astype(float).round(1)
         df_precip[col] = df_precip[col].astype(float).round(1)
     
-    # Adicionar coluna de média anual
     df_temp['Media_Anual'] = df_temp[meses].mean(axis=1).round(1)
     df_precip['Total_Anual'] = df_precip[meses].sum(axis=1).round(1)
     
     return df_temp, df_precip
 
-# Função para gerar dados socioeconômicos simulados
 def gerar_dados_socioeconomicos():
     """
     Gera dados socioeconômicos simulados por estado baseados em
     estatísticas aproximadas do Brasil.
     """
-    # Lista de estados brasileiros
     estados = [
         'Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia', 'Ceará', 
         'Distrito Federal', 'Espírito Santo', 'Goiás', 'Maranhão', 
@@ -109,7 +93,6 @@ def gerar_dados_socioeconomicos():
         'Santa Catarina', 'São Paulo', 'Sergipe', 'Tocantins'
     ]
     
-    # Valores aproximados de IDH por estado (baseados em dados reais)
     idh_aproximado = {
         'Distrito Federal': 0.850, 'São Paulo': 0.826, 'Santa Catarina': 0.808,
         'Rio de Janeiro': 0.796, 'Paraná': 0.792, 'Rio Grande do Sul': 0.787,
@@ -122,7 +105,6 @@ def gerar_dados_socioeconomicos():
         'Piauí': 0.684, 'Maranhão': 0.676, 'Alagoas': 0.672
     }
     
-    # Renda per capita aproximada por estado (R$)
     renda_aproximada = {
         'Distrito Federal': 2800, 'São Paulo': 2100, 'Rio de Janeiro': 1900,
         'Santa Catarina': 1850, 'Rio Grande do Sul': 1800, 'Paraná': 1750,
@@ -135,7 +117,6 @@ def gerar_dados_socioeconomicos():
         'Piauí': 750, 'Alagoas': 700, 'Maranhão': 650
     }
     
-    # Taxa de urbanização aproximada por estado (%)
     urbanizacao_aproximada = {
         'São Paulo': 96.5, 'Rio de Janeiro': 97.3, 'Distrito Federal': 97.0,
         'Goiás': 91.2, 'Minas Gerais': 85.3, 'Espírito Santo': 84.2,
@@ -148,7 +129,6 @@ def gerar_dados_socioeconomicos():
         'Alagoas': 73.6, 'Sergipe': 73.5, 'Bahia': 72.1
     }
     
-    # Acesso a saneamento básico aproximado por estado (%)
     saneamento_aproximado = {
         'São Paulo': 92.0, 'Santa Catarina': 88.5, 'Distrito Federal': 90.0,
         'Paraná': 82.3, 'Rio Grande do Sul': 81.7, 'Minas Gerais': 79.5,
@@ -161,7 +141,6 @@ def gerar_dados_socioeconomicos():
         'Roraima': 55.7, 'Pará': 49.3, 'Amapá': 56.2
     }
     
-    # Densidade demográfica aproximada por estado (hab/km²)
     densidade_aproximada = {
         'Distrito Federal': 500, 'Rio de Janeiro': 365, 'São Paulo': 175,
         'Alagoas': 112, 'Sergipe': 94, 'Pernambuco': 89,
@@ -174,7 +153,6 @@ def gerar_dados_socioeconomicos():
         'Amapá': 4, 'Roraima': 2, 'Amazonas': 2
     }
     
-    # Criar DataFrame com os dados
     df_socio = pd.DataFrame({
         'UF': estados,
         'IDH': [idh_aproximado[estado] for estado in estados],
@@ -184,12 +162,10 @@ def gerar_dados_socioeconomicos():
         'Densidade_Demografica': [densidade_aproximada[estado] for estado in estados]
     })
     
-    # Definir UF como índice
     df_socio.set_index('UF', inplace=True)
     
     return df_socio
 
-# Gerar e salvar os dados
 print("Gerando dados climáticos simulados...")
 df_temp, df_precip = gerar_dados_climaticos()
 df_temp.to_csv('/home/ubuntu/dados_complementares/temperatura_media_por_estado.csv')
@@ -199,14 +175,11 @@ print("Gerando dados socioeconômicos simulados...")
 df_socio = gerar_dados_socioeconomicos()
 df_socio.to_csv('/home/ubuntu/dados_complementares/dados_socioeconomicos_por_estado.csv')
 
-# Carregar dados de dengue para integração
 print("Carregando dados de dengue...")
 df_dengue = pd.read_csv('/home/ubuntu/dengue_data_raw.csv')
 
-# Criar visualizações exploratórias dos dados climáticos e socioeconômicos
 print("Criando visualizações exploratórias...")
 
-# 1. Mapa de calor de temperatura média por estado e mês
 plt.figure(figsize=(14, 10))
 sns.heatmap(df_temp.iloc[:, :-1].astype(float), annot=False, cmap='YlOrRd', 
             linewidths=0.5)
@@ -216,7 +189,6 @@ plt.ylabel('Estado', fontsize=12)
 plt.tight_layout()
 plt.savefig('/home/ubuntu/dados_complementares/heatmap_temperatura.png', dpi=300)
 
-# 2. Mapa de calor de precipitação por estado e mês
 plt.figure(figsize=(14, 10))
 sns.heatmap(df_precip.iloc[:, :-1].astype(float), annot=False, cmap='Blues', 
             linewidths=0.5)
@@ -226,7 +198,6 @@ plt.ylabel('Estado', fontsize=12)
 plt.tight_layout()
 plt.savefig('/home/ubuntu/dados_complementares/heatmap_precipitacao.png', dpi=300)
 
-# 3. Gráfico de barras para IDH por estado
 plt.figure(figsize=(14, 8))
 df_socio.sort_values('IDH', ascending=False).IDH.plot(kind='bar', color='teal')
 plt.title('Índice de Desenvolvimento Humano (IDH) por Estado', fontsize=16)
@@ -236,7 +207,6 @@ plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 plt.savefig('/home/ubuntu/dados_complementares/idh_por_estado.png', dpi=300)
 
-# 4. Gráfico de barras para Renda per capita por estado
 plt.figure(figsize=(14, 8))
 df_socio.sort_values('Renda_Per_Capita', ascending=False).Renda_Per_Capita.plot(kind='bar', color='darkgreen')
 plt.title('Renda Per Capita por Estado (R$)', fontsize=16)
@@ -246,7 +216,6 @@ plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 plt.savefig('/home/ubuntu/dados_complementares/renda_por_estado.png', dpi=300)
 
-# 5. Gráfico de barras para Taxa de Urbanização por estado
 plt.figure(figsize=(14, 8))
 df_socio.sort_values('Taxa_Urbanizacao', ascending=False).Taxa_Urbanizacao.plot(kind='bar', color='purple')
 plt.title('Taxa de Urbanização por Estado (%)', fontsize=16)
@@ -256,7 +225,6 @@ plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 plt.savefig('/home/ubuntu/dados_complementares/urbanizacao_por_estado.png', dpi=300)
 
-# 6. Gráfico de barras para Acesso a Saneamento por estado
 plt.figure(figsize=(14, 8))
 df_socio.sort_values('Acesso_Saneamento', ascending=False).Acesso_Saneamento.plot(kind='bar', color='brown')
 plt.title('Acesso a Saneamento Básico por Estado (%)', fontsize=16)
